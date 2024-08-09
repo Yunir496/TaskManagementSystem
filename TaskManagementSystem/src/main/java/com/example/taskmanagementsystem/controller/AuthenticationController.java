@@ -1,6 +1,8 @@
 package com.example.taskmanagementsystem.controller;
 
 import com.example.taskmanagementsystem.dto.AuthenticationRequestDto;
+import com.example.taskmanagementsystem.dto.CreateUserDto;
+import com.example.taskmanagementsystem.dto.UserDto;
 import com.example.taskmanagementsystem.entity.User;
 import com.example.taskmanagementsystem.security.jwt.JwtTokenProvider;
 import com.example.taskmanagementsystem.service.UserService;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthenticationController {
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
@@ -52,4 +55,16 @@ public class AuthenticationController {
             throw new BadCredentialsException("Invalid email or password");
         }
     }
+    @PostMapping("create")
+    public ResponseEntity createUser(@RequestBody CreateUserDto createUserDto){
+        User user = createUserDto.toUser();
+        User register = userService.register(user, createUserDto.isUser());
+        if(register==null){
+            throw new RuntimeException("User "+createUserDto+" not registered");
+        }
+        return ResponseEntity.ok(UserDto.fromUser(register));
+
+    }
+
 }
+
