@@ -1,70 +1,36 @@
 package com.example.taskmanagementsystem.controller;
-
-import com.example.taskmanagementsystem.dto.AuthenticationRequestDto;
-import com.example.taskmanagementsystem.dto.CreateUserDto;
-import com.example.taskmanagementsystem.dto.UserDto;
-import com.example.taskmanagementsystem.entity.User;
-import com.example.taskmanagementsystem.security.jwt.JwtTokenProvider;
-import com.example.taskmanagementsystem.service.UserService;
+import com.example.taskmanagementsystem.dto.auth.AuthenticationRequestDto;
+import com.example.taskmanagementsystem.dto.user.CreateUserDto;
+import com.example.taskmanagementsystem.dto.user.UserDto;
+import com.example.taskmanagementsystem.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthenticationController {
-
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager,
-                                    JwtTokenProvider jwtTokenProvider, UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
+
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
-        try{
-            String email = requestDto.getEmail();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,requestDto.getPassword()));
-            User user = userService.findByEmail(email);
-            if(user == null){
-                throw new UsernameNotFoundException("User with email "+ email+" not found");
-            }
-            String token = jwtTokenProvider.createToken(email,user.getRoles());
-            Map<Object,Object> response = new HashMap<>();
-            response.put("email",email);
-            response.put("token", token);
-            return ResponseEntity.ok(response);
-        }catch (AuthenticationException e){
-            throw new BadCredentialsException("Invalid email or password");
-        }
+    public ResponseEntity<Map<Object, Object>> login(@RequestBody AuthenticationRequestDto requestDto) {
+        Map<Object, Object> response = authenticationService.authenticateUser(requestDto);
+        return ResponseEntity.ok(response);
     }
+
     @PostMapping("create")
-    public ResponseEntity createUser(@RequestBody CreateUserDto createUserDto){
-        User user = createUserDto.toUser();
-        User register = userService.register(user, createUserDto.isUser());
-        if(register==null){
-            throw new RuntimeException("User "+createUserDto+" not registered");
-        }
-        return ResponseEntity.ok(UserDto.fromUser(register));
-
+    public ResponseEntity<UserDto> createUser(@RequestBody CreateUserDto createUserDto) {
+        return ResponseEntity.ok(authenticationService.createUser(createUserDto));
     }
-
 }
-

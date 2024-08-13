@@ -1,4 +1,4 @@
-package com.example.taskmanagementsystem.security.jwt;
+package com.example.taskmanagementsystem.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

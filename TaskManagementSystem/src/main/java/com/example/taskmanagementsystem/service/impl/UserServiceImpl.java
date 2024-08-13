@@ -2,15 +2,17 @@ package com.example.taskmanagementsystem.service.impl;
 
 import com.example.taskmanagementsystem.dao.RoleRepository;
 import com.example.taskmanagementsystem.dao.UserRepository;
+import com.example.taskmanagementsystem.dto.user.UserDto;
 import com.example.taskmanagementsystem.entity.Role;
-import com.example.taskmanagementsystem.entity.Status;
-import com.example.taskmanagementsystem.entity.User;
 
+import com.example.taskmanagementsystem.entity.User;
+import com.example.taskmanagementsystem.entity.enums.Status;
 import com.example.taskmanagementsystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
@@ -33,7 +35,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user, boolean isUser) {
+    @Transactional
+    public UserDto register(User user, boolean isUser) {
         Role defaultRole;
         if (isUser) {
             defaultRole = roleRepository.findByName("ROLE_USER");
@@ -46,18 +49,20 @@ public class UserServiceImpl implements UserService {
         user.setCreated(new Date());
         user.setUpdated(new Date());
         User registeredUser = userRepository.save(user);
-        log.info("In register user {} successfully registered", registeredUser);
-        return registeredUser;
+        log.info("In register user {} successfully registered with role {}", registeredUser, defaultRole);
+        return UserDto.fromUser(registeredUser);
     }
 
     @Override
-    public List<User> getAll() {
+    @Transactional
+    public List<UserDto> getAll() {
         List<User> result = userRepository.findAll();
         log.info("In getAll {} users found", result.size());
-        return result;
+        return result.stream().map(UserDto::fromUser).toList();
     }
 
     @Override
+    @Transactional
     public User findByEmail(String email) {
         User result = userRepository.findByEmail(email);
         log.info("In findByEmail user {} found by email {}", result, email);
@@ -65,6 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User findById(Long id) {
         Optional<User> result = userRepository.findById(id);
         if (result.isEmpty()) {
@@ -77,8 +83,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        userRepository.deleteById(id);
-        log.info("In delete user with id {} successfully deleted", id);
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            log.warn("In delete user with id {} not found", id);
+            throw new EntityNotFoundException("User with id " + id + " not found");
+        }
+        userRepository.delete(optionalUser.get());
+        log.info("In delete user with id {} found and successfully deleted", id);
     }
 }

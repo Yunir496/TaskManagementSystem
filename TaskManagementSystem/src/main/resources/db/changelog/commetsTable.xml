@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="19.10.11.08.2024" author="Yunir">
+        <createTable tableName="comments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text" type="VARCHAR(200)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="author_id" type="BIGINT">
+                <constraints references="users(id)" nullable="false" foreignKeyName="comments_users_fk"/>
+            </column>
+            <column name="task_id" type="BIGINT">
+                <constraints references="tasks(id)" nullable="false" foreignKeyName="comments_tasks_fk"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

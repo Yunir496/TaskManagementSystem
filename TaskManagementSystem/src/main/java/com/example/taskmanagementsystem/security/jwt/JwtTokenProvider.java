@@ -1,6 +1,7 @@
 package com.example.taskmanagementsystem.security.jwt;
 
 import com.example.taskmanagementsystem.entity.Role;
+import com.example.taskmanagementsystem.exception.JwtAuthenticationsException;
 import io.jsonwebtoken.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +67,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token){
         try{
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-            if(claims.getBody().getExpiration().before(new Date())){
-                return false;
-            }
-            return true;
+            return !claims.getBody().getExpiration().before(new Date());
         }catch(JwtException|IllegalArgumentException e){
             throw new JwtAuthenticationsException("Jwt token is expired or invalid");
         }

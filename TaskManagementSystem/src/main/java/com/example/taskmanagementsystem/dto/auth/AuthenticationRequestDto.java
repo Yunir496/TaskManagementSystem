@@ -1,4 +1,4 @@
-package com.example.taskmanagementsystem.dto;
+package com.example.taskmanagementsystem.dto.auth;
 
 import lombok.Data;
 

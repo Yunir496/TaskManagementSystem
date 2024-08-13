@@ -2,9 +2,10 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-<!--    <include file="tasksTable.xml" relativeToChangelogFile="true"/>-->
+
     <include file="usersTable.xml" relativeToChangelogFile="true"/>
     <include file="rolesTable.xml" relativeToChangelogFile="true"/>
     <include file="userRoleTable.xml" relativeToChangelogFile="true"/>
-<!--    <include file="CommentsTable.xml" relativeToChangelogFile="true"/>-->
+    <include file="tasksTable.xml" relativeToChangelogFile="true"/>
+    <include file="commentsTable.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

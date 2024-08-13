@@ -1,7 +1,7 @@
 package com.example.taskmanagementsystem.security.jwt;
 
 import com.example.taskmanagementsystem.entity.Role;
-import com.example.taskmanagementsystem.entity.Status;
+import com.example.taskmanagementsystem.entity.enums.Status;
 import com.example.taskmanagementsystem.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

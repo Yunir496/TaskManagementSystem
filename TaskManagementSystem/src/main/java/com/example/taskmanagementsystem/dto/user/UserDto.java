@@ -1,4 +1,4 @@
-package com.example.taskmanagementsystem.dto;
+package com.example.taskmanagementsystem.dto.user;
 
 import com.example.taskmanagementsystem.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
