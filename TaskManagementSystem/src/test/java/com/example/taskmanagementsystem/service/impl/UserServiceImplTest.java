@@ -144,6 +144,7 @@ class UserServiceImplTest {
         assertEquals(mockUser, result);
         assertEquals(mockUser.getId(), result.getId());
     }
+
     @Test
     void testDeleteByIdWithExistingUser() {
         // Тест сценария, когда юзер найден

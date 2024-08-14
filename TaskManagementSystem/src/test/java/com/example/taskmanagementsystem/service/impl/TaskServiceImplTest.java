@@ -182,7 +182,7 @@ class TaskServiceImplTest {
 
         TaskDto result = taskService.createOrUpdate(taskDto);
         assertNotNull(result);
-        assertEquals(taskDto.getTitle(),result.getTitle());
+        assertEquals(taskDto.getTitle(), result.getTitle());
     }
 
     @Test
@@ -226,6 +226,7 @@ class TaskServiceImplTest {
 
         assertEquals(1, result.size());
     }
+
     @Test
     public void testFindAllWhenTaskFilterDtoIsNotNullAndPageableIsNull() {
         SecurityContextHolder.setContext(securityContext);

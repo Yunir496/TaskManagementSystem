@@ -90,7 +90,7 @@ class CommentServiceImplTest {
 
         Throwable throwable = assertThrows(EntityNotFoundException.class, () -> commentService.save(commentDto));
         assertNotNull(throwable);
-        assertEquals("Task with id "+ commentDto.getTaskId() +" not found", throwable.getMessage());
+        assertEquals("Task with id " + commentDto.getTaskId() + " not found", throwable.getMessage());
     }
 
     @Test
@@ -130,7 +130,7 @@ class CommentServiceImplTest {
     @Test
     void testFindAllWithAllData() {
         // Тест сценария, когда все данные есть
-        Page<Comment> specComments = new PageImpl<>(comments.subList(0,2), PageRequest.of(0, 2), comments.size());
+        Page<Comment> specComments = new PageImpl<>(comments.subList(0, 2), PageRequest.of(0, 2), comments.size());
         when(commentRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(specComments);
 
         CommentFilterDto commentFilterDto = CommentFilterDto.builder()
