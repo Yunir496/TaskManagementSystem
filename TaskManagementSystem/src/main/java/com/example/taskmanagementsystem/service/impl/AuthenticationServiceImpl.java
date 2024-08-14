@@ -4,6 +4,7 @@ import com.example.taskmanagementsystem.dto.auth.AuthenticationRequestDto;
 import com.example.taskmanagementsystem.dto.user.CreateUserDto;
 import com.example.taskmanagementsystem.dto.user.UserDto;
 import com.example.taskmanagementsystem.entity.User;
+import com.example.taskmanagementsystem.exception.UserNotRegisteredException;
 import com.example.taskmanagementsystem.security.jwt.JwtTokenProvider;
 import com.example.taskmanagementsystem.service.AuthenticationService;
 import com.example.taskmanagementsystem.service.UserService;
@@ -61,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserDto register = userService.register(user, createUserDto.isUser());
         if (register == null) {
             log.warn("In registerUser user with email: {} not registered", createUserDto.getEmail());
-            throw new RuntimeException("User " + createUserDto + " not registered");
+            throw new UserNotRegisteredException("User " + createUserDto + " not registered");
         }
         log.info("In registerUser user: {} registered successfully", register);
         return register;

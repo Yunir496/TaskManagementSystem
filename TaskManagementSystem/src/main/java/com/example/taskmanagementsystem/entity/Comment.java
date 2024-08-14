@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
-
+/**
+ * Класс для сущности комментариев к задачам.
+ */
 @Getter
 @Setter
 @AllArgsConstructor

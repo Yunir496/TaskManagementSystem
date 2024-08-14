@@ -7,6 +7,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Класс для сущности задач.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -34,11 +37,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id + ", title='" + title + '\'' +
-                ", description='" + description + '\'' + ", status=" + status +
-                ", priority=" + priority + ", creator=" + creator.getId() +
-                ", executor=" + executor.getId() + ", comments=" + comments +
-                '}';
+        return "Task{" + "id=" + id +
+                ", title='" + title + '\'' + ", description='" + description + '\'' +
+                ", status=" + status + ", priority=" + priority +
+                (creator != null ? ", creator=" + creator.getId() : "") + ", comments=" + comments +
+                (executor != null ? ", executor=" + executor.getId() : "") + '}';
     }
 }

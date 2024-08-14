@@ -13,9 +13,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Класс спецификации комментариев.
+ */
 public class CommentSpecification {
-
+    /**
+     * Создает спецификацию запроса для фильтрации комментариев на основе заданных критериев.
+     * @param commentFilterDto объект, содержащий критерии фильтрации комментариев
+     *
+     * @return спецификацию запроса для фильтрации комментариев
+     */
     public static Specification<Comment> commentFilter(CommentFilterDto commentFilterDto) {
         return ((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

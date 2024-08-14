@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.util.Date;
 
-
+/**
+ * DTO для фильтрации комментариев
+ */
 @Data
 @Builder
 public class CommentFilterDto {

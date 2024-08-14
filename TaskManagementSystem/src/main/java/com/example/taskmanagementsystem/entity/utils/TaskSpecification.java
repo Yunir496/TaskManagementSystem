@@ -11,9 +11,16 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Класс спецификации задач.
+ */
 public class TaskSpecification {
-
+    /**
+     * Создает спецификацию запроса для фильтрации задач на основе заданных критериев.
+     * @param taskFilterDto объект, содержащий критерии фильтрации задач
+     *
+     * @return спецификацию запроса для фильтрации задач
+     */
     public static Specification<Task> taskFilter(TaskFilterDto taskFilterDto) {
         return ((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

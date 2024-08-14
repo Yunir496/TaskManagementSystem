@@ -1,12 +1,9 @@
 package com.example.taskmanagementsystem.exception;
 
-import org.springframework.security.core.AuthenticationException;
-
-public class JwtAuthenticationsException extends AuthenticationException {
-    public JwtAuthenticationsException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
+/**
+ * Исключение, связанное с аутентификацией по JWT.
+ */
+public class JwtAuthenticationsException extends RuntimeException {
     public JwtAuthenticationsException(String msg) {
         super(msg);
     }

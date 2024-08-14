@@ -1,15 +1,22 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <changeSet id="23.48.09.08.2024" author="Yunir">
         <createTable tableName="tasks">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)"/>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
             <column name="description" type="VARCHAR(200)"/>
-            <column name="status" type="VARCHAR(50)"/>
-            <column name="priority" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
             <column name="creator_id" type="BIGINT">
                 <constraints references="users(id)" nullable="false" foreignKeyName="tasks_creators_fk"/>
             </column>

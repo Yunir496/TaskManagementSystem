@@ -6,6 +6,7 @@ import com.example.taskmanagementsystem.dto.task.CreateTaskDto;
 import com.example.taskmanagementsystem.dto.task.TaskFilterDto;
 import com.example.taskmanagementsystem.dto.user.SetExecutorTaskDto;
 import com.example.taskmanagementsystem.dto.task.TaskDto;
+import com.example.taskmanagementsystem.entity.Role;
 import com.example.taskmanagementsystem.entity.Task;
 import com.example.taskmanagementsystem.entity.User;
 import com.example.taskmanagementsystem.entity.utils.TaskSpecification;
@@ -42,12 +43,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TaskDto createOrUpdate(CreateTaskDto taskDto) {        //получаем id текущего пользователя
+    public TaskDto createOrUpdate(CreateTaskDto taskDto) {
+        //получаем id текущего пользователя
         Long currentUserId = ((JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         User creator = userService.findById(taskDto.getCreatorId());
         if (creator == null) {
             log.warn("In createOrUpdate user with id {} not found", taskDto.getCreatorId());
-            throw new EntityNotFoundException("uswr with id " + taskDto.getCreatorId() + " not found");
+            throw new EntityNotFoundException("User with id " + taskDto.getCreatorId() + " not found");
         }
         if (!creator.getId().equals(currentUserId)) {
             if (taskDto.getId() != null) {
@@ -61,7 +63,7 @@ public class TaskServiceImpl implements TaskService {
         User executor = userService.findById(taskDto.getExecutorId());
         if (executor == null) {
             log.warn("In createOrUpdate user with id {} not found", taskDto.getExecutorId());
-            throw new EntityNotFoundException("uswr with id " + taskDto.getExecutorId() + " not found");
+            throw new EntityNotFoundException("User with id " + taskDto.getExecutorId() + " not found");
         }
         Task task = taskDto.toTask();
         task.setCreator(creator);
@@ -74,13 +76,26 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public List<TaskDto> findAll(@Nullable TaskFilterDto taskFilterDto) {
-        if (taskFilterDto == null) {
-            List<Task> tasks = taskRepository.findAll();
+        Long currentUserId = ((JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        User currentUser = userService.findById(currentUserId);
+        Role roleUser = currentUser.getRoles()
+                .stream().filter(r -> r.getName().equals("ROLE_USER"))
+                .findFirst().orElse(null);
+        if (taskFilterDto == null) {            // Если нет фильтров и пользователь не имеет роли Юзер, то насильно задаем фильтр где он executor
+            List<Task> tasks;
+            if (roleUser == null) {
+                tasks = taskRepository.findAll(TaskSpecification.taskFilter(TaskFilterDto.builder().executorId(currentUserId).build()));
+            } else {
+                tasks = taskRepository.findAll();
+            }
             log.info("In findAll found {} task(s) without filtration and pagination", tasks.size());
             return tasks.stream().map(TaskDto::fromTask).toList();
         }
+        if (roleUser == null) {
+            //Если пользователь не имеет роли USER, то насильно в критерию добавляем поиск по исполнителю его id
+            taskFilterDto.setExecutorId(currentUserId);
+        }
         Pageable pageable = createPageable(taskFilterDto);
-
         Specification<Task> specification = TaskSpecification.taskFilter(taskFilterDto);
         if (pageable == null) {
             List<Task> tasks = taskRepository.findAll(specification);
@@ -150,7 +165,8 @@ public class TaskServiceImpl implements TaskService {
             log.warn("In changeStatus task with id {} not found", taskStatusDto.getTaskId());
             throw new EntityNotFoundException("Task with id " + taskStatusDto.getTaskId() + " not found");
         }
-        if (!optionalTask.get().getCreator().getId().equals(currentUserId) || !optionalTask.get().getExecutor().getId().equals(taskStatusDto.getTaskId())) {
+        if (!optionalTask.get().getCreator().getId().equals(currentUserId)
+                && !optionalTask.get().getExecutor().getId().equals(currentUserId)) {
             log.warn("In changeStatus user with id {} tried to assign a new status to a task for which he is not the creator or executor {}", currentUserId, optionalTask.get());
             throw new InsufficientPermissionsException("The user is trying to assign a new status someone else's task.");
         }

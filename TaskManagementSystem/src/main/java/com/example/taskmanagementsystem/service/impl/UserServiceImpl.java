@@ -4,9 +4,8 @@ import com.example.taskmanagementsystem.dao.RoleRepository;
 import com.example.taskmanagementsystem.dao.UserRepository;
 import com.example.taskmanagementsystem.dto.user.UserDto;
 import com.example.taskmanagementsystem.entity.Role;
-
-import com.example.taskmanagementsystem.entity.User;
 import com.example.taskmanagementsystem.entity.enums.Status;
+import com.example.taskmanagementsystem.entity.User;
 import com.example.taskmanagementsystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
